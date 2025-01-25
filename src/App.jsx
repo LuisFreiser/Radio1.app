@@ -98,39 +98,39 @@ function App() {
     };
   }, [retryCount]);
 
+  // Declarar handleCanPlay fuera de togglePlay
+  const handleCanPlay = async (audio) => {
+    try {
+      await audio.play();
+      setIsPlaying(true);
+    } catch (err) {
+      console.error("Error playing:", err);
+      setError("Error al reproducir - Por favor intente nuevamente");
+      setIsPlaying(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const togglePlay = async () => {
     try {
       setError(null);
       setIsLoading(true);
 
       if (audioRef.current.paused) {
-        // Crear nueva instancia de Audio para evitar problemas de caché
         const audio = audioRef.current;
         const streamUrl = `/api/radio?t=${Date.now()}`;
 
-        // Limpiar eventos anteriores
-        audio.removeEventListener("canplay", handleCanPlay);
+        // Remover listener anterior
+        audio.removeEventListener("canplay", () => handleCanPlay(audio));
 
-        // Configurar el audio
+        // Configurar audio
         audio.src = streamUrl;
         audio.preload = "auto";
         audio.crossOrigin = "anonymous";
 
-        // Manejar cuando el audio está listo
-        const handleCanPlay = async () => {
-          try {
-            await audio.play();
-            setIsPlaying(true);
-          } catch (err) {
-            console.error("Error playing:", err);
-            setError("Error al reproducir - Por favor intente nuevamente");
-            setIsPlaying(false);
-          } finally {
-            setIsLoading(false);
-          }
-        };
-
-        audio.addEventListener("canplay", handleCanPlay);
+        // Agregar nuevo listener
+        audio.addEventListener("canplay", () => handleCanPlay(audio));
         await audio.load();
       } else {
         audioRef.current.pause();
