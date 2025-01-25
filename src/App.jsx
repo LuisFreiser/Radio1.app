@@ -104,21 +104,26 @@ function App() {
       setIsLoading(true);
 
       if (audioRef.current.paused) {
-        // Usar la URL completa incluyendo el dominio de Vercel
-        const proxyUrl = `${window.location.origin}/api/radio?t=${Date.now()}`;
-        audioRef.current.src = proxyUrl;
+        const streamUrl = `/api/radio?t=${Date.now()}`;
+        audioRef.current.src = streamUrl;
+        audioRef.current.crossOrigin = "anonymous";
+        audioRef.current.preload = "auto";
 
         try {
           await audioRef.current.load();
-          await audioRef.current.play();
-          setIsPlaying(true);
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+            setIsPlaying(true);
+          }
         } catch (err) {
           console.error("Error playing:", err);
-          setError("Error al reproducir");
+          setError("Error al reproducir - Intente nuevamente");
           setIsPlaying(false);
         }
       } else {
         audioRef.current.pause();
+        audioRef.current.src = "";
         setIsPlaying(false);
       }
     } catch (err) {
@@ -314,16 +319,18 @@ function App() {
 
           <audio
             ref={audioRef}
-            preload="none"
+            preload="auto"
+            crossOrigin="anonymous"
             type="audio/mpeg"
             onError={(e) => {
               console.error("Audio error:", e.target.error);
-              setError(
-                "Error en la conexión: " +
-                  (e.target.error?.message || "Error desconocido")
-              );
-              setIsLoading(false);
-              setIsPlaying(false);
+              if (retryCount < maxRetries) {
+                togglePlay();
+              } else {
+                setError("Error en la conexión - Intente nuevamente");
+                setIsLoading(false);
+                setIsPlaying(false);
+              }
             }}
             onPlaying={() => {
               setIsLoading(false);
