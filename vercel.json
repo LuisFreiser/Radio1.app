@@ -11,18 +11,18 @@
       }
     },
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node@latest"
+      "src": "api/radio.js",
+      "use": "@vercel/node"
     }
   ],
   "rewrites": [
     {
       "source": "/api/radio",
-      "destination": "/api/radio.js"
+      "destination": "/api/radio"
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ],
   "headers": [
@@ -31,11 +31,7 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "*" },
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
-        }
+        { "key": "Access-Control-Allow-Headers", "value": "*" }
       ]
     }
   ]
