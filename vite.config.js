@@ -8,7 +8,7 @@ export default defineConfig({
       '/api/radio': {
         target: 'https://uk16freenew.listen2myradio.com',
         changeOrigin: true,
-        rewrite: (path) => '/live.mp3?typeportmount=s1_33828_stream_518870635',
+        rewrite: () => '/live.mp3?typeportmount=s1_33828_stream_518870635',
         configure: (proxy) => {
           proxy.on('error', (err) => {
             console.error('proxy error', err);
