@@ -14,27 +14,12 @@ export default async function handler(req, res) {
             throw new Error(`Error en el servidor: ${response.status}`);
         }
 
-        // Configura los headers de la respuesta del proxy
-        res.status(response.status);
-        response.headers.forEach((value, key) => {
-            if (key.toLowerCase() !== "transfer-encoding") {
-                res.setHeader(key, value);
-            }
-        });
+        // Establece los encabezados de la respuesta del stream
+        res.setHeader("Content-Type", "audio/mpeg"); // Cambia según el formato del stream
+        res.setHeader("Cache-Control", "no-cache");
 
-        // Pipea el cuerpo directamente
-        const reader = response.body.getReader();
-
-        const forwardStream = async () => {
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                res.write(value);
-            }
-            res.end();
-        };
-
-        await forwardStream();
+        // Reenvía el contenido directamente al cliente
+        response.body.pipe(res);
     } catch (error) {
         console.error("Error en el proxy:", error);
         res.status(500).json({ error: "Error al conectar con el stream de radio" });
