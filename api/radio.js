@@ -3,30 +3,33 @@ export default async function handler(req, res) {
 
     try {
         const response = await fetch(targetUrl, {
-            method: req.method,
+            method: "GET",
             headers: {
-                ...req.headers,
-                host: new URL(targetUrl).host, // Establece el host del servidor objetivo
+                "User-Agent": req.headers["user-agent"] || "Mozilla/5.0",
+                Accept: "*/*",
             },
         });
 
         if (!response.ok) {
-            throw new Error(`Error en la respuesta del servidor: ${response.status}`);
+            throw new Error(`Error en el servidor: ${response.status}`);
         }
 
-        // Reenvía los headers desde la respuesta del servidor de radio
+        // Configura los headers de la respuesta del proxy
+        res.status(response.status);
         response.headers.forEach((value, key) => {
-            res.setHeader(key, value);
+            if (key.toLowerCase() !== "transfer-encoding") {
+                res.setHeader(key, value);
+            }
         });
 
-        // Lee el stream y reenvía los datos al cliente
+        // Pipea el cuerpo directamente
         const reader = response.body.getReader();
 
         const forwardStream = async () => {
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) break; // Final del stream
-                res.write(value); // Escribe directamente el buffer en la respuesta
+                if (done) break;
+                res.write(value);
             }
             res.end();
         };
