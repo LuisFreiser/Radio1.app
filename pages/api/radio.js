@@ -23,9 +23,13 @@ const handler = async (req, res) => {
                 "Accept": "audio/mpeg",
                 "Range": req.headers.range || "bytes=0-",
                 "Connection": "keep-alive",
-                "Referer": "https://listen2myradio.com/"
+                "Referer": "https://listen2myradio.com/",
+                "Origin": "https://listen2myradio.com"
             },
         });
+
+        // Agregar log para debugging
+        console.log('Stream response status:', response.status);
 
         if (!response.ok) {
             throw new Error(`Server responded with ${response.status}`);
@@ -52,7 +56,11 @@ const handler = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Proxy error:", error);
+        console.error("Detailed proxy error:", {
+            message: error.message,
+            stack: error.stack
+        });
+
         if (!res.headersSent) {
             res.status(500).json({
                 error: "Failed to connect to radio stream",

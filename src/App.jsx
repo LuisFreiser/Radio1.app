@@ -104,8 +104,8 @@ function App() {
       setIsLoading(true);
 
       if (audioRef.current.paused) {
-        // Usar nuestro proxy en lugar de la URL directa
-        const proxyUrl = `/api/radio?t=${Date.now()}`;
+        // Usar la URL completa incluyendo el dominio de Vercel
+        const proxyUrl = `${window.location.origin}/api/radio?t=${Date.now()}`;
         audioRef.current.src = proxyUrl;
 
         try {
