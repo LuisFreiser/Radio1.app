@@ -104,32 +104,43 @@ function App() {
       setIsLoading(true);
 
       if (audioRef.current.paused) {
+        // Crear nueva instancia de Audio para evitar problemas de caché
+        const audio = audioRef.current;
         const streamUrl = `/api/radio?t=${Date.now()}`;
-        audioRef.current.src = streamUrl;
-        audioRef.current.crossOrigin = "anonymous";
-        audioRef.current.preload = "auto";
 
-        try {
-          await audioRef.current.load();
-          const playPromise = audioRef.current.play();
-          if (playPromise !== undefined) {
-            await playPromise;
+        // Limpiar eventos anteriores
+        audio.removeEventListener("canplay", handleCanPlay);
+
+        // Configurar el audio
+        audio.src = streamUrl;
+        audio.preload = "auto";
+        audio.crossOrigin = "anonymous";
+
+        // Manejar cuando el audio está listo
+        const handleCanPlay = async () => {
+          try {
+            await audio.play();
             setIsPlaying(true);
+          } catch (err) {
+            console.error("Error playing:", err);
+            setError("Error al reproducir - Por favor intente nuevamente");
+            setIsPlaying(false);
+          } finally {
+            setIsLoading(false);
           }
-        } catch (err) {
-          console.error("Error playing:", err);
-          setError("Error al reproducir - Intente nuevamente");
-          setIsPlaying(false);
-        }
+        };
+
+        audio.addEventListener("canplay", handleCanPlay);
+        await audio.load();
       } else {
         audioRef.current.pause();
         audioRef.current.src = "";
         setIsPlaying(false);
+        setIsLoading(false);
       }
     } catch (err) {
       console.error("Toggle error:", err);
       setError("Error en la reproducción");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -320,17 +331,12 @@ function App() {
           <audio
             ref={audioRef}
             preload="auto"
-            crossOrigin="anonymous"
             type="audio/mpeg"
             onError={(e) => {
               console.error("Audio error:", e.target.error);
-              if (retryCount < maxRetries) {
-                togglePlay();
-              } else {
-                setError("Error en la conexión - Intente nuevamente");
-                setIsLoading(false);
-                setIsPlaying(false);
-              }
+              setError("Error de conexión - Intente nuevamente");
+              setIsLoading(false);
+              setIsPlaying(false);
             }}
             onPlaying={() => {
               setIsLoading(false);
@@ -339,6 +345,10 @@ function App() {
             }}
             onWaiting={() => setIsLoading(true)}
             onPause={() => setIsPlaying(false)}
+            onEnded={() => {
+              setIsPlaying(false);
+              togglePlay(); // Reintentar reproducción automáticamente
+            }}
           />
 
           {error && (
