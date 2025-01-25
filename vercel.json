@@ -9,10 +9,6 @@
       "config": {
         "zeroConfig": true
       }
-    },
-    {
-      "src": "api/radio.js",
-      "use": "@vercel/node"
     }
   ],
   "rewrites": [
@@ -31,7 +27,11 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "*" }
+        { "key": "Access-Control-Allow-Headers", "value": "*" },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
       ]
     }
   ]
