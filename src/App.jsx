@@ -20,6 +20,8 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const maxRetries = 3;
   const audioRef = useRef(null);
+  const [audioSource, setAudioSource] = useState(`/api/radio?t=${Date.now()}`);
+  const [hlsInstance, setHlsInstance] = useState(null);
 
   // Agregar estos estados para el slider
   const [currentImage, setCurrentImage] = useState(0);
@@ -38,15 +40,6 @@ function App() {
 
     return () => clearInterval(timer);
   }, [images.length]);
-
-  // // Funciones para controlar el slider
-  // const nextImage = () => {
-  //   setCurrentImage((prev) => (prev + 1) % images.length);
-  // };
-
-  // const prevImage = () => {
-  //   setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
-  // };
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -111,23 +104,38 @@ function App() {
       setIsLoading(true);
 
       if (audioRef.current.paused) {
-        await audioRef.current.load(); // Recargar el stream antes de reproducir
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          await playPromise;
+        // Usar nuestro proxy en lugar de la URL directa
+        const proxyUrl = `/api/radio?t=${Date.now()}`;
+        audioRef.current.src = proxyUrl;
+
+        try {
+          await audioRef.current.load();
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (err) {
+          console.error("Error playing:", err);
+          setError("Error al reproducir");
+          setIsPlaying(false);
         }
       } else {
         audioRef.current.pause();
         setIsPlaying(false);
-        setIsLoading(false);
       }
     } catch (err) {
-      console.error("Error al reproducir:", err);
-      setError("No se pudo reproducir la radio");
+      console.error("Toggle error:", err);
+      setError("Error en la reproducción");
+    } finally {
       setIsLoading(false);
-      setIsPlaying(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (hlsInstance) {
+        hlsInstance.destroy();
+      }
+    };
+  }, [hlsInstance]);
 
   const handleVolumeChange = (e) => {
     const value = e.target.value;
@@ -306,9 +314,24 @@ function App() {
 
           <audio
             ref={audioRef}
-            src="/api/radio"
             preload="none"
-            crossOrigin="anonymous"
+            type="audio/mpeg"
+            onError={(e) => {
+              console.error("Audio error:", e.target.error);
+              setError(
+                "Error en la conexión: " +
+                  (e.target.error?.message || "Error desconocido")
+              );
+              setIsLoading(false);
+              setIsPlaying(false);
+            }}
+            onPlaying={() => {
+              setIsLoading(false);
+              setIsPlaying(true);
+              setError(null);
+            }}
+            onWaiting={() => setIsLoading(true)}
+            onPause={() => setIsPlaying(false)}
           />
 
           {error && (
@@ -480,33 +503,6 @@ function App() {
               />
             </div>
           ))}
-
-          {/* Controles del slider */}
-          {/* <button
-            onClick={prevImage}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition-all"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
-            onClick={nextImage}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2 transition-all"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button> */}
-
-          {/* Indicadores */}
-          {/* <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentImage(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentImage ? "bg-white" : "bg-white/50"
-                }`}
-              />
-            ))}
-          </div> */}
         </div>
       </div>
     </div>
