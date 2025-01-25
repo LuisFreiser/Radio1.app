@@ -9,11 +9,11 @@ export default defineConfig({
         target: 'https://uk16freenew.listen2myradio.com',
         changeOrigin: true,
         rewrite: (path) => '/live.mp3?typeportmount=s1_33828_stream_518870635',
-        configure: (proxy, options) => {
-          proxy.on('error', (err, req, res) => {
+        configure: (proxy) => {
+          proxy.on('error', (err) => {
             console.error('proxy error', err);
           });
-          proxy.on('proxyReq', (proxyReq, req, res) => {
+          proxy.on('proxyReq', (proxyReq) => {
             proxyReq.setHeader('Origin', 'https://listen2myradio.com');
           });
         }
