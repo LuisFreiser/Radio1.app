@@ -6,7 +6,7 @@ export default async function handler(req, res) {
             method: req.method,
             headers: {
                 ...req.headers,
-                host: new URL(targetUrl).host, // Asegúrate de que el host sea el del servidor de radio
+                host: new URL(targetUrl).host, // Establece el host del servidor objetivo
             },
         });
 
@@ -14,16 +14,25 @@ export default async function handler(req, res) {
             throw new Error(`Error en la respuesta del servidor: ${response.status}`);
         }
 
-        res.status(response.status);
-
-        // Reenvía los headers y el cuerpo de la respuesta
+        // Reenvía los headers desde la respuesta del servidor de radio
         response.headers.forEach((value, key) => {
             res.setHeader(key, value);
         });
 
-        response.body.pipe(res);
+        // Envía el stream de datos al cliente
+        const reader = response.body.getReader();
+        const encoder = new TextEncoder();
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            res.write(encoder.decode(value));
+        }
+
+        res.end();
     } catch (error) {
         console.error("Error en el proxy:", error);
-        res.status(500).json({ error: "Error al conectar con el stream" });
+        res.status(500).json({ error: "Error al conectar con el stream de radio" });
     }
 }
