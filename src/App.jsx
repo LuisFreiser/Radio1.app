@@ -3,7 +3,7 @@ import { Menu, X, Pause, Play, Music2 } from "lucide-react";
 import { Toaster, toast } from "sonner"; // Importa Toaster y toast
 import ProgramDaily from "./components/ProgramDaily";
 import SocialLinks from "./components/SocialLinks";
-import ImageSlider from "./components/imageSlider";
+import ImageSlider from "./components/ImageSlider";
 import MobileMenu from "./components/MobileMenu";
 import StoreLinks from "./components/StoreLinks";
 
