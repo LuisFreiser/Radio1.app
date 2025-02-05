@@ -36,7 +36,7 @@ function SocialLinks() {
       </div>
 
       {/* Mobile Social Links - Fixed Bottom */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent backdrop-blur-sm">
+      <div className="md:hidden fixed z-50 bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent backdrop-blur-sm">
         <div className="flex justify-center space-x-8">
           <a
             href="https://web.facebook.com/antorchaencendida.radio"
