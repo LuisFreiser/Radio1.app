@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "vercel-build": "vite build",
-    "deploy": "vercel deploy --prod"
+    "deploy": "vercel deploy --prod",
+    "preview": "vite preview",
+    "start": "vite preview --host --port $PORT"
   },
   "dependencies": {
     "@vercel/node": "^4.0.0",
