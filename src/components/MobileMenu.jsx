@@ -1,4 +1,4 @@
-import { X, Facebook, Youtube, Instagram, MessageCircle } from "lucide-react";
+import { X } from "lucide-react";
 import PropTypes from "prop-types";
 
 function MobileMenu({ toggleMenu, isMenuOpen }) {
@@ -69,7 +69,7 @@ function MobileMenu({ toggleMenu, isMenuOpen }) {
           </div>
         </div>
 
-        {/* Mobile Social Links */}
+        {/* Mobile Social Links
         <div className="mt-8">
           <div className="flex justify-center space-x-6">
             <a href="#" className="text-white hover:text-blue-300">
@@ -85,7 +85,7 @@ function MobileMenu({ toggleMenu, isMenuOpen }) {
               <MessageCircle className="w-6 h-6" />
             </a>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

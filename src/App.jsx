@@ -11,7 +11,6 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const audioRef = useRef(null);
 
@@ -21,12 +20,10 @@ function App() {
     const handlePlay = () => {
       setIsLoading(false);
       setIsPlaying(true);
-      setError(null);
     };
 
     const handleLoading = () => {
       setIsLoading(true);
-      setError(null);
     };
 
     const handleError = (e) => {
@@ -81,7 +78,6 @@ function App() {
   //TOGGLE PLAY MEJORADO Y MENSAJES DE SONNER
   const togglePlay = async () => {
     try {
-      setError(null); // Limpia errores previos
       setIsLoading(true); // Muestra el estado de carga
 
       const audio = audioRef.current;
@@ -180,7 +176,6 @@ function App() {
             onPlaying={() => {
               setIsLoading(false);
               setIsPlaying(true);
-              setError(null);
             }}
             onWaiting={() => setIsLoading(true)}
             onPause={() => setIsPlaying(false)}

@@ -42,7 +42,7 @@ function SocialLinks() {
             href="https://web.facebook.com/antorchaencendida.radio"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white hover:text-white-300 transform hover:scale-125 transition-all"
+            className="text-white hover:text-white-300 transform hover:scale-110 transition-all"
           >
             <Facebook className="w-8 h-8" />
           </a>
@@ -50,19 +50,19 @@ function SocialLinks() {
             href="https://www.youtube.com/@antorchaencendidaministeri2436"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white hover:text-white-300 transform hover:scale-125 transition-all"
+            className="text-white hover:text-white-300 transform hover:scale-110 transition-all"
           >
             <Youtube className="w-8 h-8" />
           </a>
           <a
             href="#"
-            className="text-white hover:text-white-300 transform hover:scale-125 transition-all"
+            className="text-white hover:text-white-300 transform hover:scale-110 transition-all"
           >
             <Music2 className="w-8 h-8" />
           </a>
           <a
             href="#"
-            className="text-white hover:text-white-300 transform hover:scale-125 transition-all"
+            className="text-white hover:text-white-300 transform hover:scale-110 transition-all"
           >
             <MessageCircle className="w-8 h-8" />
           </a>
