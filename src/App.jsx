@@ -1,3 +1,4 @@
+// //CODIGO DE RADIO ONLINE SIN API SERVER PROXY PARA EL STREAMING
 // import { useState, useRef, useEffect } from "react";
 // import {
 //   Menu,
@@ -16,12 +17,9 @@
 //   const [volume, setVolume] = useState(1);
 //   const [isLoading, setIsLoading] = useState(false);
 //   const [error, setError] = useState(null);
-//   const [retryCount, setRetryCount] = useState(0);
 //   const [isMenuOpen, setIsMenuOpen] = useState(false);
-//   const maxRetries = 3;
 //   const audioRef = useRef(null);
-//   const [audioSource, setAudioSource] = useState(`/api/radio?t=${Date.now()}`);
-//   const [hlsInstance, setHlsInstance] = useState(null);
+//   // const [hlsInstance, setHlsInstance] = useState(null); //No se usa pero se mantiene por si a futuro se requiere
 
 //   // Agregar estos estados para el slider
 //   const [currentImage, setCurrentImage] = useState(0);
@@ -44,45 +42,22 @@
 //   useEffect(() => {
 //     const audio = audioRef.current;
 
-//     const handleError = async (e) => {
-//       console.error("Error de reproducción:", e);
-
-//       if (retryCount < maxRetries) {
-//         setError("Reintentando conexión...");
-//         setRetryCount((prev) => prev + 1);
-
-//         // Esperar 2 segundos antes de reintentar
-//         await new Promise((resolve) => setTimeout(resolve, 2000));
-
-//         // Reintentar reproducción
-//         try {
-//           await audio.load();
-//           await audio.play();
-//         } catch (error) {
-//           setError("Error al reproducir la radio");
-//           setIsLoading(false);
-//           setIsPlaying(false);
-//           console.log(error);
-//         }
-//       } else {
-//         setError(
-//           "No se pudo establecer la conexión después de varios intentos"
-//         );
-//         setIsLoading(false);
-//         setIsPlaying(false);
-//       }
-//     };
-
 //     const handlePlay = () => {
 //       setIsLoading(false);
 //       setIsPlaying(true);
 //       setError(null);
-//       setRetryCount(0);
 //     };
 
 //     const handleLoading = () => {
 //       setIsLoading(true);
 //       setError(null);
+//     };
+
+//     const handleError = (e) => {
+//       console.error("Error de reproducción:", e);
+//       setError("Error al reproducir la radio");
+//       setIsLoading(false);
+//       setIsPlaying(false);
 //     };
 
 //     audio.addEventListener("error", handleError);
@@ -96,21 +71,7 @@
 //       audio.removeEventListener("waiting", handleLoading);
 //       audio.removeEventListener("stalled", handleError);
 //     };
-//   }, [retryCount]);
-
-//   // Declarar handleCanPlay fuera de togglePlay
-//   const handleCanPlay = async (audio) => {
-//     try {
-//       await audio.play();
-//       setIsPlaying(true);
-//     } catch (err) {
-//       console.error("Error playing:", err);
-//       setError("Error al reproducir - Por favor intente nuevamente");
-//       setIsPlaying(false);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
+//   }, []);
 
 //   const togglePlay = async () => {
 //     try {
@@ -119,22 +80,16 @@
 
 //       if (audioRef.current.paused) {
 //         const audio = audioRef.current;
-//         const streamUrl = `/api/radio?t=${Date.now()}`;
-
-//         // Remover listener anterior
-//         audio.removeEventListener("canplay", () => handleCanPlay(audio));
-
-//         // Configurar audio
-//         audio.src = streamUrl;
+//         audio.src = "https://stream.zeno.fm/7skvov1tpc5tv"; // Usamos el link directo a la radio Online
 //         audio.preload = "auto";
 //         audio.crossOrigin = "anonymous";
 
-//         // Agregar nuevo listener
-//         audio.addEventListener("canplay", () => handleCanPlay(audio));
 //         await audio.load();
+//         await audio.play();
+//         setIsPlaying(true);
+//         setIsLoading(false);
 //       } else {
 //         audioRef.current.pause();
-//         audioRef.current.src = "";
 //         setIsPlaying(false);
 //         setIsLoading(false);
 //       }
@@ -145,18 +100,20 @@
 //     }
 //   };
 
-//   useEffect(() => {
-//     return () => {
-//       if (hlsInstance) {
-//         hlsInstance.destroy();
-//       }
-//     };
-//   }, [hlsInstance]);
+//   // useEffect(() => {
+//   //   return () => {
+//   //     if (hlsInstance) {
+//   //       hlsInstance.destroy();
+//   //     }
+//   //   };
+//   // }, [hlsInstance]);
 
 //   const handleVolumeChange = (e) => {
 //     const value = e.target.value;
 //     setVolume(value);
-//     audioRef.current.volume = value;
+//     if (audioRef.current) {
+//       audioRef.current.volume = value;
+//     }
 //   };
 
 //   const toggleMenu = () => {
@@ -164,7 +121,7 @@
 //   };
 
 //   return (
-//     <div className="min-h-screen bg-[url('/assets/Fondo3.jpg')] bg-cover bg-center p-4">
+//     <div className="min-h-screen bg-black bg-cover bg-center p-4">
 //       {/* Header with Navigation */}
 //       <div className="relative z-50">
 //         {/* Menu Button - Solo visible en móvil */}
@@ -347,7 +304,6 @@
 //             onPause={() => setIsPlaying(false)}
 //             onEnded={() => {
 //               setIsPlaying(false);
-//               togglePlay(); // Reintentar reproducción automáticamente
 //             }}
 //           />
 
@@ -528,7 +484,8 @@
 
 // export default App;
 
-//CODIGO DE RADIO ONLINE SIN API SERVER PROXY PARA EL STREAMING
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 import { useState, useRef, useEffect } from "react";
 import {
   Menu,
@@ -541,6 +498,7 @@ import {
   MessageCircle,
   Instagram,
 } from "lucide-react";
+import { Toaster, toast } from "sonner"; // Importa Toaster y toast
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -549,7 +507,7 @@ function App() {
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const audioRef = useRef(null);
-  const [hlsInstance, setHlsInstance] = useState(null); //No se usa pero se mantiene por si a futuro se requiere
+  // const [hlsInstance, setHlsInstance] = useState(null); //No se usa pero se mantiene por si a futuro se requiere
 
   // Agregar estos estados para el slider
   const [currentImage, setCurrentImage] = useState(0);
@@ -585,9 +543,12 @@ function App() {
 
     const handleError = (e) => {
       console.error("Error de reproducción:", e);
-      setError("Error al reproducir la radio");
+      toast.error(
+        "Error al reproducir la radio. Por favor, Espere un Momento."
+      ); //Mensaje de error con Sonner
       setIsLoading(false);
       setIsPlaying(false);
+      // setError("Error al reproducir la radio");
     };
 
     audio.addEventListener("error", handleError);
@@ -610,9 +571,7 @@ function App() {
 
       if (audioRef.current.paused) {
         const audio = audioRef.current;
-        //const streamUrl = `/api/radio?t=${Date.now()}`; // Eliminado: Ya no usamos la API
-
-        audio.src = "https://stream.zeno.fm/7skvov1tpc5tv"; // Usamos el link directo
+        audio.src = "https://stream.zeno.fm/7skvov1tpc5tv"; // Usamos el link directo a la radio Online
         audio.preload = "auto";
         audio.crossOrigin = "anonymous";
 
@@ -620,25 +579,28 @@ function App() {
         await audio.play();
         setIsPlaying(true);
         setIsLoading(false);
+        toast.success("Radio online conectada"); // Mensaje de éxito con Sonner
       } else {
         audioRef.current.pause();
         setIsPlaying(false);
         setIsLoading(false);
+        toast.success("Radio online en Pausa"); // Mensaje informativo con Sonner
       }
     } catch (err) {
       console.error("Toggle error:", err);
-      setError("Error en la reproducción");
+      toast.error("Ocurrió un error al intentar reproducir la radio."); // Mensaje de error con Sonner
       setIsLoading(false);
+      // setError("Error en la reproducción");
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (hlsInstance) {
-        hlsInstance.destroy();
-      }
-    };
-  }, [hlsInstance]);
+  // useEffect(() => {
+  //   return () => {
+  //     if (hlsInstance) {
+  //       hlsInstance.destroy();
+  //     }
+  //   };
+  // }, [hlsInstance]);
 
   const handleVolumeChange = (e) => {
     const value = e.target.value;
@@ -654,6 +616,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-black bg-cover bg-center p-4">
+      {/* Toaster component for displaying notifications */}
+      <Toaster richColors closeButton />
       {/* Header with Navigation */}
       <div className="relative z-50">
         {/* Menu Button - Solo visible en móvil */}
@@ -823,9 +787,12 @@ function App() {
             type="audio/mpeg"
             onError={(e) => {
               console.error("Audio error:", e.target.error);
-              setError("Error de conexión - Intente nuevamente");
+              toast.error(
+                "Error al reproducir la radio. Por favor, intenta nuevamente."
+              ); //Mensaje de error con Sonner
               setIsLoading(false);
               setIsPlaying(false);
+              // setError("Error de conexión - Intente nuevamente");
             }}
             onPlaying={() => {
               setIsLoading(false);
@@ -836,7 +803,6 @@ function App() {
             onPause={() => setIsPlaying(false)}
             onEnded={() => {
               setIsPlaying(false);
-              //togglePlay(); //  NO Reintentar reproducción automáticamente, removido para evitar loops.
             }}
           />
 
@@ -934,7 +900,9 @@ function App() {
         {/* Social Media Links - Desktop only */}
         <div className="hidden md:flex fixed right-4 top-1/2 -translate-y-1/2 flex-col gap-4">
           <a
-            href="#"
+            href="https://web.facebook.com/antorchaencendida.radio"
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-white/10 p-3 rounded-lg hover:bg-white/20 transition"
           >
             <Facebook className="w-6 h-6 text-white" />
@@ -963,13 +931,17 @@ function App() {
         <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent backdrop-blur-sm">
           <div className="flex justify-center space-x-8">
             <a
-              href="#"
+              href="https://web.facebook.com/antorchaencendida.radio"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white hover:text-white-300 transform hover:scale-110 transition-all"
             >
               <Facebook className="w-8 h-8" />
             </a>
             <a
-              href="#"
+              href="https://www.youtube.com/@antorchaencendidaministeri2436"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white hover:text-white-300 transform hover:scale-110 transition-all"
             >
               <Youtube className="w-8 h-8" />
