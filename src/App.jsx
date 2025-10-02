@@ -215,16 +215,16 @@ function App() {
             {audioElement}
 
             {/* Album Art and Player */}
-            <div className=" bg-white/10 backdrop-blur-lg mb-8 p-4 rounded-2xl overflow-hidden">
-              <div className="flex justify-center items-center h-32 mb-2 mt-2">
+            <div className=" bg-white/10 backdrop-blur-lg mb-8 p-4 rounded-2xl overflow-hidden transform scale-100 hover:scale-105 transition-all duration-500 shadow-2xl hover:shadow-3xl w-72 max-w-sm sm:max-w-md lg:max-w-lg">
+              <div className="flex justify-center items-center h-32 sm:h-40 mb-2 mt-2">
                 <img
                   src="/assets/Logo2.jpg"
                   alt="Now Playing"
-                  className="w-32 h-32 sm:w-32 sm:h-32 lg:w-32 lg:h-32 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
+                  className="w-32 h-32 sm:w-40 sm:h-40 lg:w-32 lg:h-32 rounded-lg shadow-lg object-cover"
                 />
               </div>
               <div className="flex flex-col items-center mt-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={togglePlay}
                     disabled={isLoading}
@@ -269,7 +269,7 @@ function App() {
                 </div>
 
                 {/* Control Volume */}
-                <div className="mt-4 sm:mt-6 lg:mt-8 w-full max-w-xs sm:max-w-sm lg:max-w-md flex items-center gap-3 sm:gap-4 lg:gap-6">
+                <div className="mt-4 sm:mt-6 lg:mt-4 w-full max-w-xs sm:max-w-sm lg:max-w-md flex items-center gap-3 sm:gap-4 lg:gap-6">
                   <Music2 className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-sky-100 transition-colors duration-300 hover:text-sky-200" />
                   <input
                     type="range"
