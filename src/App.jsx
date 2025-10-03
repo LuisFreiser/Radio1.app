@@ -216,11 +216,11 @@ function App() {
 
             {/* Album Art and Player */}
             <div className=" bg-white/10 backdrop-blur-lg mb-8 p-4 rounded-2xl overflow-hidden transform scale-100 hover:scale-105 transition-all duration-500 shadow-2xl hover:shadow-3xl w-72 max-w-sm sm:max-w-md lg:max-w-lg">
-              <div className="flex justify-center items-center h-32 sm:h-40 mb-2 mt-2">
+              <div className="flex justify-center items-center h-32 sm:h-40 mb-5 mt-2">
                 <img
                   src="/assets/Logo2.jpg"
                   alt="Now Playing"
-                  className="w-32 h-32 sm:w-40 sm:h-40 lg:w-32 lg:h-32 rounded-lg shadow-lg object-cover"
+                  className="w-44 h-36 sm:w-48 sm:h-36 lg:w-48 lg:h-40 rounded-lg shadow-lg object-cover"
                 />
               </div>
               <div className="flex flex-col items-center mt-4">
@@ -285,7 +285,7 @@ function App() {
             </div>
 
             {/* Store Links */}
-            <div className="w-full flex justify-center mb-8 lg:mb-0">
+            <div className="w-full flex justify-center mb-5 lg:mb-0">
               <StoreLinks />
             </div>
           </div>
@@ -295,7 +295,7 @@ function App() {
         </div>
 
         {/* Slider Section Component */}
-        <div className="mt-8">
+        <div className="mt-1 sm:mt-20 lg:mt-8">
           <ImageSlider />
         </div>
       </Suspense>
